@@ -145,17 +145,17 @@
 #define	I2C_DATA_SIZE   32
 typedef	signed char     i2cDataType; /* ストレージに格納するデータ型 */
 
-typedef enum I2CSTATE{/*I2C割り込みの状態*/
-    BEFORE_INTERRUPT,       //初期値 割り込みに入る前
-    MISSED_RECEIVING_DATA,  //アドレス・データ受信ミス
-    CONTINUE_IDLE,          //アドレス・データ受信後のアイドルから復帰しない
-    RECEIVED_ADD,           //アドレス受信完了
-    R_STORAGE_OVERFLOWED,   //受信オーバーフロー　受信ストレージがいっぱい
-    RECEIVED_DATA,          //データ受信完了
-    T_STORAGE_IS_EMPTY,     //送信ストレージが空 エラー値をセット
-    SET_DATA,               //送信データをバッファにセット
-    RECEIVED_NACK           //マスターからNACKを受信
-}I2CSTATE;
+//typedef enum I2CSTATE{/*I2C割り込みの状態*/
+//    BEFORE_INTERRUPT,       //初期値 割り込みに入る前
+//    MISSED_RECEIVING_DATA,  //アドレス・データ受信ミス
+//    CONTINUE_IDLE,          //アドレス・データ受信後のアイドルから復帰しない
+//    RECEIVED_ADD,           //アドレス受信完了
+//    R_STORAGE_OVERFLOWED,   //受信オーバーフロー　受信ストレージがいっぱい
+//    RECEIVED_DATA,          //データ受信完了
+//    T_STORAGE_IS_EMPTY,     //送信ストレージが空 エラー値をセット
+//    SET_DATA,               //送信データをバッファにセット
+//    RECEIVED_NACK           //マスターからNACKを受信
+//}I2CSTATE;
 
 
 extern unsigned char i2cSlaveInitialize(unsigned char address);
@@ -168,7 +168,7 @@ extern unsigned char i2cClearTransmissionStorage(void);
 
 extern unsigned char i2cClearReceivedStorage(void);
 
-extern I2CSTATE i2cGetState(void);
+//extern I2CSTATE i2cGetState(void);
 
 extern unsigned char i2cGetStorageDataNum(unsigned char choices);
 

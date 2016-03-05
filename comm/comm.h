@@ -13,7 +13,8 @@
 
 
 /****************************************/
-#define   COMM_MODE_UART
+//#define   COMM_MODE_UART
+#define	  COMM_MODE_CAN
 //#define	COMM_MODE_I2C
 
 #define	UART_BAUDRATE   57600

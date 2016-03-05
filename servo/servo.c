@@ -152,9 +152,9 @@ extern unsigned short getAllLogs(signed char* buf_ref, signed char* buf_mes)
 /*******************************************/
 void _ISR _T1Interrupt(void)
 {
-    const unsigned int NUM_OF_LOOP_LOGGING_ = 4;	 /*2ms * 4 = 8msごとにログを取る*/
+//    const unsigned int NUM_OF_LOOP_LOGGING_ = 4;	 /*2ms * 4 = 8msごとにログを取る*/
     static signed long output;
-    static unsigned int	count_logging;
+//    static unsigned int	count_logging;
     signed int output_limited;
     signed long	measured_speed  = 0;
     signed int	shutdown_output = 0;
