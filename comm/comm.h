@@ -39,6 +39,7 @@ typedef struct	Order{
 /****************************************/
 void initializeComm(void);
 Order fetchOrder(void);
+void SendCAN(Order send);
 short sendLogs(unsigned short num_data, signed char* ref, signed char* mes);
 /****************************************/
 

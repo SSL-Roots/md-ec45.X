@@ -87,6 +87,8 @@ void setEcanMessage(EcanMessageBuffers *buffer, int sid, long eid, unsigned int 
 
 unsigned char CANPullData(unsigned char num, CANDataType *data);
 
+Order getOrder(void);
+
 void configEcanFilter(unsigned int filter_num, unsigned int buffer, unsigned int is_eid_enable, unsigned int sid, unsigned long eid);
 
 void initilizeCanConfiguration(void);

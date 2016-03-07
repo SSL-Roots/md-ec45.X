@@ -18,13 +18,13 @@
 #include "comm/comm.h"
 #include "servo/servo.h"
 #include "servo/logger/logger.h"
+#include "lib/ECAN/ECAN.h"
 
 #include <assert/assert.h>
 #include <uart_dsPIC33F/uart_dsPIC33F.h>
 
 #include <xprintf/xprintf.h>
 /********************************************************/
-
 
 /********************************************************/
 static void sendLogToMain(void);
@@ -38,13 +38,13 @@ int main(void)
     initializeMotorUnit();
     initializeServo();
 
-    xdev_out(putcUart);
+//    xdev_out(putcUart);
 
-    Order order;
-//    signed long i;
+   Order order;
 
     while(1){
-        order = fetchOrder();
+        order = getOrder();
+    //    SendCAN(order);
         executeOrder(order);
         sendLogToMain();
     }

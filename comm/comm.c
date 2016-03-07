@@ -32,7 +32,7 @@ ECAN1MSGBUF ecan1msgBuf __attribute__( (space(dma), aligned(NUM_OF_ECAN_BUFS*32)
 
 
 /**************************************/
-static bool fetchByteData(unsigned char* buf);
+static bool fetchByteData(CANDataType* buf);
 /**************************************/
 
 void initializeComm(void)
@@ -61,48 +61,62 @@ void initializeComm(void)
 /**************************************/
 Order fetchOrder(void)
 {
-    static Order    order;
-    unsigned char   buf;
+    
+    Order     order;
     unsigned char   send_data[8] = {11,12,13,14,15,16,17,18};
     unsigned char   i = 0;
     
     Err_unpackerNextMsgpack err;
     
     /* 受信バッファからアンパッカーへデータを移動 */
-    while(fetchByteData(&buf) == true){
-        pushByteUnpackerMsgpack(buf, &G_upkr);
-    }
-  
+//    while(fetchByteData(&buf) == true){
+//        
+//        if(buf == 0xBF)i = 1;
+//        switch(i){
+//        case 1:
+//            i = 2;    
+//            break;
+//        case 2:
+//            i = 3;
+//            order.command = buf;
+//            break;
+//        case 3:
+//            i = 4;
+//            order.data[0] = (signed int)((buf & 0x00FF) << 8 );
+//            break;
+//        case 4:
+//            i = 0;
+//            order.data[0] |= (signed int)(buf & 0x00FF);
+//            break;
+//        default:
+//            break;
+//                
+//        } 
+//        //pushByteUnpackerMsgpack(buf, &G_upkr);
+//    }
 
-    while(1){
-        err = unpackerNextMsgpack(&G_upkr, &G_upkd);
-
-        if(err == UNPACKING_UNPACKER_NEXT_MSGPACK_){ break;}	//アンパッカーのバッファが空
-        if(err == SUCCEEDED_UNPACKER_NEXT_MSGPACK_){
-            if (G_upkd.data->type != MSGPACK_OBJECT_ARRAY){ continue; }
-            if (G_upkd.data->via.array.size != 2){ continue; }
-
-            /* Order 更新 */
-            msgpack_object* obj_order   = G_upkd.data->via.array.ptr;
-            msgpack_object* obj_data    = obj_order[1].via.array.ptr;
-            order.command = (unsigned char)obj_order[0].via.u64;
-            order.data[0] = (signed int)obj_data->via.i64;
-            send_data[0] = order.command;
-            send_data[1] = (unsigned char)(order.data[0] & 0x00FF);
-            send_data[2] = (unsigned char)((order.data[0] & 0xFF00) >> 4);
-            CAN1SendMessage(&send_data, 3, 1337, 0, 0, ecan1msgBuf, 0);
-            while(C1TR01CONbits.TXREQ0==1){
-                if(C1TR01CONbits.TXERR0 == 1)LATAbits.LATA1  = 0;
-            }
-            LATAbits.LATA1  = 1;
-        }
-    }
+//    
+//    while(1){
+//        err = unpackerNextMsgpack(&G_upkr, &G_upkd);
+//
+//        if(err == UNPACKING_UNPACKER_NEXT_MSGPACK_){ break;}	//アンパッカーのバッファが空
+//        if(err == SUCCEEDED_UNPACKER_NEXT_MSGPACK_){
+//            if (G_upkd.data->type != MSGPACK_OBJECT_ARRAY){ continue; }
+//            if (G_upkd.data->via.array.size != 2){ continue; }
+//
+//            /* Order 更新 */
+//            msgpack_object* obj_order   = G_upkd.data->via.array.ptr;
+//            msgpack_object* obj_data    = obj_order[1].via.array.ptr;
+//            order.command = (unsigned char)obj_order[0].via.u64;
+//            order.data[0] = (signed int)obj_data->via.i64;
+//        }
+//   }
     
     return order;
 }
 /**************************************/
 
-static bool fetchByteData(unsigned char* buf)
+static bool fetchByteData(CANDataType* buf)
 {
 #if defined(COMM_MODE_UART)
     ErrGetcUart	err;
@@ -168,4 +182,19 @@ short sendLogs(unsigned short num_data, signed char* ref, signed char* mes)
     return 0;
 #endif
     return 0;
+}
+
+void SendCAN(Order send){
+    char i;
+    unsigned char send_data[8];
+    LATAbits.LATA1  = 1;
+    for(i=0;i<1;i++){
+        send_data[2*i] = (unsigned char)(send.data[0] & 0x00FF);
+        send_data[2*i+1] = (unsigned char)((send.data[0]  & 0xFF00) >>8);
+    }
+    CAN1SendMessage(&send_data, 2, 1337, 0, 0, &ecan1msgBuf, 0);
+    while(C1TR01CONbits.TXREQ0==1);
+    //__delay_ms(2);
+    LATAbits.LATA1  = 0;
+    //__delay_ms(2);
 }

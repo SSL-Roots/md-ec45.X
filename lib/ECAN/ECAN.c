@@ -1,6 +1,7 @@
 #include <xc.h>
 #include <ecan.h>
 #include <dma.h>
+#include "../../comm/comm.h"
 #include "ECAN.h"
 #include "ECAN_config.h"
 
@@ -28,6 +29,7 @@
 #define CAN_SAM_1          0x0
 #define CAN_SAM_3          0x1
 
+Order can_order;
 /*************************fifo.hから抜粋*************************/
 typedef struct {
     CANDataType	data[CAN_DATA_SIZE];
@@ -272,7 +274,6 @@ static unsigned char getFillFIFO(CANFIFO *p_fifo)
 void __attribute__((  interrupt, auto_psv)) _C1Interrupt(void)
 {
     int i;
-    char buffer[8];
    
     if(C1INTFbits.RBIF==1){
         //Buffer 1に入ったとき
@@ -282,29 +283,32 @@ void __attribute__((  interrupt, auto_psv)) _C1Interrupt(void)
                 G_ecanbuf[1][i] = ecan1msgBuf[1][i];
                 C1RXFUL1bits.RXFUL1 = 0;
             }
-            i = 0;
-            for(i=0;i<2;i++){
-                buffer[2*i] = (unsigned char)(G_ecanbuf[1][i+3] & 0x00FF);
-                if(addFIFO(&receiveStorage, buffer[2*i]) == CAN_FIFO_OVERFLOWED){
-                    /*受信データオーバーフロー*/
-                    state = R_STORAGE_OVERFLOWED;
-                    return;
-                }
-                buffer[2*i+1] = (unsigned char)((G_ecanbuf[1][i+3] & 0xFF00) >>8);
-                if(addFIFO(&receiveStorage, buffer[2*i+1]) == CAN_FIFO_OVERFLOWED){
-                    /*受信データオーバーフロー*/
-                    state = R_STORAGE_OVERFLOWED;
-                    return;
-                }
-            }
-            if(addFIFO(&receiveStorage, buffer[i]) == CAN_FIFO_OVERFLOWED){
-                /*受信データオーバーフロー*/
-                state = R_STORAGE_OVERFLOWED;
-                return;
-            }
-            /*データ受信完了*/
-            state = RECEIVED_DATA;
-            return;
+            can_order.command = (unsigned char)G_ecanbuf[1][3];
+            can_order.data[0] = G_ecanbuf[1][4];
+            if(G_ecanbuf[1][4] == 258)LATAbits.LATA3  = 1;
+//            i = 0;
+//            for(i=0;i<2;i++){
+//                buffer[2*i] = (unsigned char)(G_ecanbuf[1][i+3] & 0x00FF);
+//                if(addFIFO(&receiveStorage, buffer[2*i]) == CAN_FIFO_OVERFLOWED){
+//                    /*受信データオーバーフロー*/
+//                    state = R_STORAGE_OVERFLOWED;
+//                    return;
+//                }
+//                buffer[2*i+1] = (unsigned char)((G_ecanbuf[1][i+3] & 0xFF00) >>8);
+//                if(addFIFO(&receiveStorage, buffer[2*i+1]) == CAN_FIFO_OVERFLOWED){
+//                    /*受信データオーバーフロー*/
+//                    state = R_STORAGE_OVERFLOWED;
+//                    return;
+//                }
+//            }
+//            if(addFIFO(&receiveStorage, buffer[i]) == CAN_FIFO_OVERFLOWED){
+//                /*受信データオーバーフロー*/
+//                state = R_STORAGE_OVERFLOWED;
+//                return;
+//            }
+//            /*データ受信完了*/
+//            state = RECEIVED_DATA;
+//            return;
         }
         //Buffer 2に入ったとき
         else if(C1RXFUL1bits.RXFUL2){
@@ -325,4 +329,8 @@ void __attribute__((  interrupt, auto_psv)) _C1Interrupt(void)
     }
 
     IFS2bits.C1IF   = 0;
+}
+
+Order getOrder(void){
+    return can_order;
 }
