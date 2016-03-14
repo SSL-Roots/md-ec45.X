@@ -23,14 +23,14 @@
 /*---------------------------------*/
 /*hall.c*/
 #define HALL_1  _RA4
-#define HALL_2  _RB4
-#define HALL_3  _RB3
+#define HALL_2  _RB3
+#define HALL_3  _RB2
 #define INITIALIZE_HALL_1 \
             _TRISA4 = 1;    _CN0IE  = 1;    _CN0PUE = 1;
 #define INITIALIZE_HALL_2 \
-	    _TRISB4 = 1;    _CN1IE = 1;     _CN1PUE = 1;
+	    _PCFG4 = 1;     _TRISB3 = 1;    _CN7IE = 1;     _CN7PUE = 1;
 #define INITIALIZE_HALL_3 \
-	    _PCFG5  = 1;    _TRISB3 = 1;    _CN7IE = 1; _CN7PUE = 1;
+	    _PCFG5  = 1;    _TRISB2 = 1;    _CN6IE = 1; _CN6PUE = 1;
 /*---------------------------------*/
 
 
