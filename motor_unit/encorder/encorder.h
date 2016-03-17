@@ -9,7 +9,7 @@
 #ifndef	_ENCORDER_H_
 #define	_ENCORDER_H_
 
-#define	ENCODER_PPR 4996//1440//4996
+#define	ENCODER_PPR 4096//1440//4996
 /***************************************/
 
 extern void         initializeEncorder(void);

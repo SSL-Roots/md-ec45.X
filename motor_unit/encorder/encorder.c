@@ -10,13 +10,10 @@
 #include "encorder.h"
 #include "../../pin_assign.h"
 
-/****************************************/
-#define	setQEIPortInput(rp_a, rp_b) _TRISB##rp_a = 1; _TRISB##rp_b = 1
-/****************************************/
-
 
 /****************************************/
 static unsigned int setQEIPort(unsigned char pin_a, unsigned char pin_b);
+static void setQEIPortInput(unsigned char pin_a, unsigned char pin_b);
 /****************************************/
 
 
@@ -37,13 +34,12 @@ extern void initializeEncorder(void)
             & POS_CNT_ERR_INT_DISABLE & QEI_QE_CLK_DIVIDE_1_256
             & QEI_QE_OUT_DISABLE;
     
-    RPINR14 = setQEIPort(5, 6);
-    setQEIPortInput(5, 6);
+    RPINR14 = setQEIPort(QEI_A_RP, QEI_B_RP);
+    setQEIPortInput(QEI_A_RP, QEI_B_RP);
 
     OpenQEI1(config_1, config_2);
     setCountEncorder(0);
 }
-
 
 static unsigned int setQEIPort(unsigned char pin_a, unsigned char pin_b)
 {
@@ -55,6 +51,13 @@ static unsigned int setQEIPort(unsigned char pin_a, unsigned char pin_b)
     temp_rpinr14 |= (0x00FF & pin_a);
 
     return temp_rpinr14;
+}
+
+
+static void setQEIPortInput(unsigned char pin_a, unsigned char pin_b)
+{
+    TRISB   |= 0x1 << pin_a;
+    TRISB   |= 0x1 << pin_b;
 }
 /****************************************/
 

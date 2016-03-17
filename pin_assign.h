@@ -36,8 +36,8 @@
 
 /*---------------------------------*/
 /*encorder.h*/
-#define	QEA_A_RP    6
-#define	QEA_B_RP    7
+#define	QEI_A_RP    4
+#define	QEI_B_RP    5
 /*---------------------------------*/
 
 
