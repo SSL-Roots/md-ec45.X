@@ -283,7 +283,7 @@ void __attribute__((  interrupt, auto_psv)) _C1Interrupt(void)
                 G_ecanbuf[1][i] = ecan1msgBuf[1][i];
                 C1RXFUL1bits.RXFUL1 = 0;
             }
-            can_order.command = (unsigned char)G_ecanbuf[1][3];
+            can_order.command = (unsigned char)G_ecanbuf[1][2];
             can_order.data[0] = G_ecanbuf[1][4];
             if(G_ecanbuf[1][4] == 258)LATAbits.LATA3  = 1;
 //            i = 0;
