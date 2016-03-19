@@ -69,7 +69,7 @@ static void executeOrder(Order order)
     switch(order.command){
     case COMMAND_SPEED_PID:
         enableServo();
-        setReferenceServo(order.data[0]);
+        setReferenceServo(order.data[0] / 10);
         break;
 
     case COMMAND_SPEED_OPENLOOP:

@@ -19,6 +19,11 @@
 #include <xprintf/xprintf.h>
 #include "../pin_assign.h"
 
+/****************************************/
+#define SMALLING_COEFF  1024
+/****************************************/
+
+
 
 /*******************************************/
 static void initializeTimer(void);
@@ -29,7 +34,8 @@ static signed int pid(signed long reference_input, signed long mesured_output);
 /*******************************************/
 static signed long G_reference_millirad_per_sec;
 static int G_is_servo_enabled = 0;
-static long G_gain_kp = 20, G_gain_ki = 1, G_gain_kd = 0;//20:1:0
+static long G_gain_kp = 0.05 * SMALLING_COEFF, G_gain_ki = 0.02 * SMALLING_COEFF, G_gain_kd = 0 * SMALLING_COEFF;//20:1:0
+static long G_gain_kb = 1;  // Anti-Wind up coefficient
 /*******************************************/
 
 
@@ -58,7 +64,7 @@ static void initializeTimer(void)
 /*******************************************/
 extern signed long setReferenceServo(signed short rad_per_sec)
 {
-    G_reference_millirad_per_sec = (long)rad_per_sec * 100;
+    G_reference_millirad_per_sec = (long)rad_per_sec * 1000;
 
     return 0;
 }
@@ -96,39 +102,34 @@ static signed int pid(signed long reference_input, signed long mesured_output)
 {
     static signed long err[3];
     static signed long long control_output[2];
+    static signed long long raw_output, saturated_output;
 
     signed long long delta_control_output;
     signed long long control_output_minimize;
 
-    /*指令値0時の初期化*/
-    if(reference_input == 0){
-        err[2] = 0;
-        err[1] = 0;
-        err[0] = 0;
-        control_output[1] = 0;
-        control_output[0] = 0;
-    }
+
     /*偏差履歴を更新*/
     err[2] = err[1];
     err[1] = err[0];
     err[0] = reference_input - mesured_output;
 
     delta_control_output  = G_gain_kp * (err[0] - err[1]);
-    delta_control_output += G_gain_ki *  err[0];
+    delta_control_output += G_gain_ki *  err[0] + G_gain_kb * (saturated_output - raw_output);
     delta_control_output += G_gain_kd * (err[0] - (2*err[1]) + err[2]);
 
     control_output[1] = control_output[0];
     control_output[0] = control_output[1] + delta_control_output;
-
-    control_output_minimize = control_output[0] / 1024;
-
-    if(control_output_minimize > SHRT_MAX){
-        return SHRT_MAX;
+    
+    raw_output  = control_output[0] / SMALLING_COEFF;
+    
+    saturated_output    = raw_output;
+    if(raw_output > SHRT_MAX){
+        saturated_output    = SHRT_MAX;
+    } else if(raw_output < SHRT_MIN){
+        saturated_output    = SHRT_MIN;
     }
-    if(control_output_minimize < SHRT_MIN){
-        return SHRT_MIN;
-    }
-    return (signed short)control_output_minimize;
+    
+    return (signed short)saturated_output;
 }
 /*******************************************/
 
@@ -218,8 +219,8 @@ void _ISR _T1Interrupt(void)
 
     }else{
         if(G_is_servo_enabled == 1){
-            output = getVoltageMotorUnit();
-            output += pid(G_reference_millirad_per_sec, measured_speed);
+            //output = getVoltageMotorUnit();
+            output = pid(G_reference_millirad_per_sec, measured_speed);
 
             if(output > 32767){
                 output_limited = 32767;
@@ -229,11 +230,6 @@ void _ISR _T1Interrupt(void)
                 output = -32768;
             }else{
                 output_limited = output;
-            }
-
-            if(G_reference_millirad_per_sec == 0){
-                output_limited = 0;
-                output = 0;
             }
 
             driveMotorUnit(output_limited);
