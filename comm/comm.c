@@ -26,7 +26,7 @@
 /*グローバル変数宣言*/
 static msgpack_unpacker	G_upkr;
 static msgpack_unpacked	G_upkd;
-ECAN1MSGBUF ecan1msgBuf __attribute__( (space(dma), aligned(NUM_OF_ECAN_BUFS*32))); //DMA領域に，NUM_OF_ECAN_BUFS*16バイトを配置
+ECAN1MSGBUF ecan1msgBuf __attribute__( (space(dma), aligned(NUM_OF_ECAN_BUFS*16))); //DMA領域に，NUM_OF_ECAN_BUFS*16バイトを配置
 /**************************************/
 
 
@@ -49,6 +49,7 @@ void initializeComm(void)
     TRISBbits.TRISB6 = 1;
     //Filter
     configEcanFilter(0, CAN_FILTER0_RX_BUFFER1, 0, 0x1AA, 0);
+    configEcanFilter(1, CAN_FILTER1_RX_BUFFER2, 0, 0x100, 0); 
 #else
 #error  "COMM_MODE IS NOT DEFINED"
 #endif

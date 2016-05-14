@@ -63,7 +63,7 @@ int fifo_conf   = CAN_DMA_BUF_SIZE_4 & CAN_FIFO_AREA_TRB1;
 *******************************************************************************/
 
 //CANxSetMaskSource
-int mask_val1   = CAN_MASK_FILTER0_MASK0 & CAN_MASK_FILTER1_MASK0;
+int mask_val1   = CAN_MASK_FILTER0_MASK0 & CAN_MASK_FILTER1_MASK1;
 int mask_val2   = 0;
 /****************************************************************************** 
  * mask_val1:フィルタ0-7の設定
@@ -121,12 +121,12 @@ int set_mask_eid[3]    = {CAN_MASK_EID(0xFFFF), CAN_MASK_EID(0xFFFF), CAN_MASK_E
 *******************************************************************************/
 
 //CAN1SetTXRXMode
-int txrx_mode_config[4] = {CAN_BUFFER0_IS_TX & CAN_ABORT_REQUEST_BUFFER0 & CAN_AUTOREMOTE_DISABLE_BUFFER0 & CAN_TX_HIGH_PRI_BUFFER0         //buffer0
+int txrx_mode_config[4] = {CAN_BUFFER0_IS_TX & CAN_ABORT_REQUEST_BUFFER0 & CAN_AUTOREMOTE_ENABLE_BUFFER0 & CAN_TX_HIGH_PRI_BUFFER0         //buffer0
                                 &CAN_BUFFER1_IS_RX & CAN_ABORT_REQUEST_BUFFER1 & CAN_AUTOREMOTE_DISABLE_BUFFER1 & CAN_TX_LOW_PRI_BUFFER1,   //buffer1
                            CAN_BUFFER2_IS_TX & CAN_ABORT_REQUEST_BUFFER2 & CAN_AUTOREMOTE_ENABLE_BUFFER2 & CAN_TX_HIGH_PRI_BUFFER2         //buffer2    TX,auto remote is enable
-                                &CAN_BUFFER3_IS_RX & CAN_ABORT_REQUEST_BUFFER3 & CAN_AUTOREMOTE_DISABLE_BUFFER3 & CAN_TX_LOW_PRI_BUFFER3,   //buffer3
-                           CAN_BUFFER4_IS_RX & CAN_ABORT_REQUEST_BUFFER4 & CAN_AUTOREMOTE_DISABLE_BUFFER4 & CAN_TX_HIGH_PRI_BUFFER4         //buffer4
-                                &CAN_BUFFER5_IS_RX & CAN_ABORT_REQUEST_BUFFER5 & CAN_AUTOREMOTE_DISABLE_BUFFER5 & CAN_TX_LOW_PRI_BUFFER5,   //buffer5
+                                &CAN_BUFFER3_IS_TX & CAN_ABORT_REQUEST_BUFFER3 & CAN_AUTOREMOTE_ENABLE_BUFFER3 & CAN_TX_LOW_PRI_BUFFER3,   //buffer3
+                           CAN_BUFFER4_IS_TX & CAN_ABORT_REQUEST_BUFFER4 & CAN_AUTOREMOTE_ENABLE_BUFFER4 & CAN_TX_HIGH_PRI_BUFFER4         //buffer4
+                                &CAN_BUFFER5_IS_TX & CAN_ABORT_REQUEST_BUFFER5 & CAN_AUTOREMOTE_ENABLE_BUFFER5 & CAN_TX_LOW_PRI_BUFFER5,   //buffer5
                            CAN_BUFFER6_IS_RX & CAN_ABORT_REQUEST_BUFFER6 & CAN_AUTOREMOTE_DISABLE_BUFFER6 & CAN_TX_HIGH_PRI_BUFFER6         //buffer6
                                 &CAN_BUFFER7_IS_RX & CAN_ABORT_REQUEST_BUFFER7 & CAN_AUTOREMOTE_DISABLE_BUFFER7 & CAN_TX_LOW_PRI_BUFFER7};  //buffer7
 /****************************************************************************** 

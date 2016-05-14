@@ -20,7 +20,7 @@
 
 #define NUM_OF_ECAN_BUFS    4
 #define ECAN_SID_F0 0x1AA
-//#define ECAN_SID_F0 0x1cB
+#define ECAN_SID_F1 0x100
 
 typedef unsigned int ECAN1MSGBUF[NUM_OF_ECAN_BUFS][8];
 extern  ECAN1MSGBUF ecan1msgBuf __attribute__( (space(dma), aligned(NUM_OF_ECAN_BUFS*32))); //DMA領域に，NUM_OF_ECAN_BUFS*16バイトを配置

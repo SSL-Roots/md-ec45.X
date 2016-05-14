@@ -97,8 +97,11 @@ void initilizeCanConfiguration(void){
     CAN1SetMask(2, set_mask_sid[2], set_mask_eid[2]);
     
     CAN1SetFilter(0, CAN_FILTER_SID(ECAN_SID_F0) & CAN_RX_EID_DIS, 0);  //デフォルトのフィルタを設定
+    CAN1SetFilter(1, CAN_FILTER_SID(ECAN_SID_F1) & CAN_RX_EID_DIS, 0);  //デフォルトのフィルタを設定
     CAN1SetBUFPNT1(CAN_FILTER0_RX_BUFFER1);
+    CAN1SetBUFPNT2(CAN_FILTER1_RX_BUFFER2);
     CAN1EnableFilter(0);
+    CAN1EnableFilter(1);
     
     C1CTRL1bits.WIN = 0;
     

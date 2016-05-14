@@ -33,6 +33,7 @@ static void executeOrder(Order order);
 
 int main(void)
 {
+    char data[4] = {1,2,3,4};
     initialize();
     initializeComm();
     initializeMotorUnit();
@@ -44,9 +45,11 @@ int main(void)
 
     while(1){
         order = getOrder();
+        
     //    SendCAN(order);
         executeOrder(order);
-        sendLogToMain();
+        setEcanMessage(ecan1msgBuf[2], 0x100, 0, 0, 0, 4, data);
+    //    sendLogToMain();
     }
 }
 
